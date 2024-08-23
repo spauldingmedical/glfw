@@ -1874,13 +1874,13 @@ GLFWbool _glfwPlatformRawMouseMotionSupported(void)
     return GLFW_TRUE;
 }
 
-void _glfwPlatformPollEvents(void)
+void _glfwPlatformPollEvents(void *hwnd)
 {
     MSG msg;
     HWND handle;
     _GLFWwindow* window;
 
-    while (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE))
+    while (PeekMessageW(&msg, hwnd, 0, 0, PM_REMOVE))
     {
         if (msg.message == WM_QUIT)
         {
@@ -1960,14 +1960,14 @@ void _glfwPlatformWaitEvents(void)
 {
     WaitMessage();
 
-    _glfwPlatformPollEvents();
+    _glfwPlatformPollEvents(NULL);
 }
 
 void _glfwPlatformWaitEventsTimeout(double timeout)
 {
     MsgWaitForMultipleObjects(0, NULL, FALSE, (DWORD) (timeout * 1e3), QS_ALLEVENTS);
 
-    _glfwPlatformPollEvents();
+    _glfwPlatformPollEvents(NULL);
 }
 
 void _glfwPlatformPostEmptyEvent(void)
