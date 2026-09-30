@@ -1880,7 +1880,12 @@ void _glfwPlatformPollEvents(void *hwnd)
     HWND handle;
     _GLFWwindow* window;
 
-    while (PeekMessageW(&msg, hwnd, 0, 0, PM_REMOVE))
+    // NOTE: Filtering PeekMessage to a single window's hwnd drops thread-wide
+    //       system messages (e.g. WM_INPUTLANGCHANGEREQUEST for the OS
+    //       keyboard-layout-switch hotkey) that Windows may target at a
+    //       different top-level window owned by this same thread.
+    (void) hwnd;
+    while (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE))
     {
         if (msg.message == WM_QUIT)
         {
